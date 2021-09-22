@@ -1,0 +1,956 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: Production Api Standard Users (admins, clients/patients)
+    url: https://shark.nextinline.io
+  - description: Production Api for partners
+    url: https://shark.nextinline.io/partners
+info:
+  description: This is a simple API
+  version: "1.0.0"
+  title: Shark
+  contact:
+    email: cwright@nextinline.io
+  # license:
+  #   name: Apache 2.0
+  #   url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin/client calls
+  - name: partners
+    description: Operations available to regular developers
+paths:
+  /partners:
+    post:
+      tags:
+        - partners
+      summary: Creates a partner
+      operationId: partnerCreate
+      description: |
+        By passing in the appropriate options, you can create a partner account
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WritePartner'
+      responses:
+        '201':
+          description: Partner Created
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/components/schemas/ReadPartner'
+        '400':
+          description: bad input parameter
+    get:
+      tags:
+        - partners
+      summary: gets partner information
+      operationId: getPartner
+      description: Gets a your partner info from the system
+      parameters:
+        - in: header
+          name: x-partner-id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: x-partner-private-key
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Partner created
+        '400':
+          description: 'invalid input, object invalid'
+        '404':
+          description: Partner does not exist
+  /partners/{partnerID}/organizations:
+    post:
+      tags:
+        - partners
+      summary: Creates an organization
+      operationId: organizationCreate
+      description: |
+        By passing in the appropriate options, you can create an organization
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WritePartner'
+      responses:
+        '201':
+          description: Partner Created
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/components/schemas/ReadPartner'
+        '400':
+          description: bad input parameter
+    get:
+      tags:
+        - partners
+      summary: gets partner information
+      operationId: authenticatePartner
+      description: Gets a your partner info from the system
+      parameters:
+        - in: header
+          name: x-partner-id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: x-partner-private-key
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Partner created
+        '400':
+          description: 'invalid input, object invalid'
+        '404':
+          description: Partner does not exist
+  /partners/{partnerID}/organizations/{organizationID}/administrators:
+    post:
+      tags:
+        - partners
+      summary: Creates administrator on organization
+      operationId: administratorCreate
+      description: |
+        By passing in the appropriate options, you can create an administrator token
+      parameters:
+        - in: header
+          name: x-partner-id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: x-partner-private-key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteAdministratorAccount'
+      responses:
+        '201':
+          description: Administrator Created
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/components/schemas/ReadAdministratorAccount'
+        '400':
+          description: bad input parameter
+  /partners/{partnerID}/organizations/{organizationID}/administrators/{administratorID}:
+    put:
+      tags:
+        - partners
+      summary: Updates an administrators on an organization
+      operationId: administratorUpdate
+      description: |
+        By passing in the appropriate options, you can update an administrator
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteAdministratorAccount'
+      responses:
+        '201':
+          description: Administrator Create
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/components/schemas/ReadAdministratorAccount'
+        '400':
+          description: bad input parameter
+  /partners/{partnerID}/organizations/{organizationID}/administrators/{administratorID}/authenticate:
+    put:
+      tags:
+        - partners
+      summary: Authenticates administrators on organization
+      operationId: administratorAuthenticate
+      description: |
+        By passing in the appropriate options, you can get an administrator token
+      parameters:
+        - in: header
+          name: x-partner-id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: x-partner-private-key
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Administrator Authenticated
+          content:
+            application/json:
+              schema:
+                type: array
+                $ref: '#/components/schemas/ReadAdministratorAccount'
+        '400':
+          description: bad input parameter
+  
+
+
+components:
+  schemas:
+    ReadAdministratorAccount:
+      properties:
+        account:
+          $ref: '#/components/schemas/ReadAccount'
+        administrator:
+          $ref: '#/components/schemas/ReadAdministrator'
+    WriteAdministratorAccount:
+      properties:
+        account:
+          $ref: '#/components/schemas/WriteAccount'
+        administrator:
+          $ref: '#/components/schemas/WriteAdministrator'
+    
+    ReadPartner:
+      type: object
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+        - privateKey
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: Widget Adapter
+        createdAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        privateKey:
+          type: string
+          example: aoeunthaeuonthaeontuaontehunaohte
+    WritePartner:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: ACME Corporation
+      type: object
+   
+    ReadOrganization:
+      type: object
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+        - privateKey
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        archived:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: datetime
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: datetime
+          example: '2016-08-29T09:12:33.001Z'
+        name:
+          type: string
+          example: The Practice For Pets
+        description:
+          type: string
+          example: Describing one organization as different from another
+        privateKey:
+          type: string
+          example: aoeunthaeuonthaeontuaontehunaohte
+        publicKey:
+          type: string
+          example: aoeunthaeuonthaeontuaontehunaohte
+        vendorId:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        published:
+          type: boolean
+          example: true
+        type:
+          type: string
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        address:
+          type: string
+          example: 108 Leaf Drive
+        coverImage:
+          type: string
+          example: https://yourimage.com
+        logoImage:
+          type: string
+          example: https://yourimage.com
+        unit:
+          type: string
+          example: Apt 22
+        city:
+          type: string
+          example: Mountainville
+        state:
+          type: string
+          example: New York
+        zip:
+          type: string
+          example: 82341
+        country:
+          type: string
+          example: United States
+        subdomain:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f085
+        tags:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        phoneNumber:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        callbacks:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        apiKeys:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        customInformation:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        prices:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        availableHours:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        syncTimes:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        subscriptionLevel:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        autoSchedule:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        reminderTime:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        path:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        website:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        facebook:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        widgetAvailability:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        timezone:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        parentPath:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        contact:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        customTOS:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        email:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        practicePhone:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        parentID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        primarySibling:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        goLiveAt:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        onboardingIssues:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        mobilePhone:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        active:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        integrationIDs:
+          type: object
+          example: {"covetrus": {"3e14e128-28c8-4af9-bf6b-188c27a72e1f": "13591"}} 
+    WriteOrganization:
+      required:
+        - name
+      properties:
+        archived:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: The Practice For Pets
+        description:
+          type: string
+          example: Describing one organization as different from another
+        vendorId:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        published:
+          type: boolean
+          example: true
+        type:
+          type: string
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        address:
+          type: string
+          example: 108 Leaf Drive
+        coverImage:
+          type: string
+          example: https://yourimage.com
+        logoImage:
+          type: string
+          example: https://yourimage.com
+        unit:
+          type: string
+          example: Apt 22
+        city:
+          type: string
+          example: Mountainville
+        state:
+          type: string
+          example: New York
+        zip:
+          type: string
+          example: 82341
+        country:
+          type: string
+          example: United States
+        subdomain:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f085
+        tags:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        phoneNumber:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        callbacks:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        apiKeys:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        customInformation:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        prices:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        availableHours:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        syncTimes:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        subscriptionLevel:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        autoSchedule:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        reminderTime:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        path:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        website:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        facebook:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        widgetAvailability:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        timezone:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        parentPath:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        contact:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        customTOS:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        email:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        practicePhone:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        parentID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        primarySibling:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        goLiveAt:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        onboardingIssues:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        mobilePhone:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        active:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      type: object
+    
+    ReadAdministrator:
+      type: object
+      required:
+        - id
+        - archived
+        - createdAt
+        - updatedAt
+        - organizationID
+        - role
+        - accountID
+        - provider
+        - receiveNotifications
+        - confirmedAt
+        - description
+        - path
+        - active
+        - serviceRegionID
+        - isWaitingRoom
+        - integrationIDs
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        archived:
+          type: boolean
+          example: false
+
+        createdAt:
+          type: string
+          format: datetime
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: datetime
+          example: '2016-08-29T09:12:33.001Z'
+        organizationID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        role:
+          type: string
+          example: admin
+        accountID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        provider:
+          type: boolean
+          example: false
+        receiveNotifications:
+          type: boolean
+          example: true
+        confirmedAt:
+          type: string
+          format: datetime
+          example: '2016-08-29T09:12:33.001Z'
+        description:
+          type: string
+          example: ''
+        path:
+          type: string
+          example: d290f1ee_6c54_4b01_90e6_d701748f0851
+        active:
+          type: boolean
+          example: false
+        serviceRegionID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        isWaitingRoom:
+          type: boolean
+          example: false
+        integrationIDs:
+          type: object
+          example: {"covetrus": {"3e14e128-28c8-4af9-bf6b-188c27a72e1f": "13591"}} 
+        account:
+          $ref: '#/components/schemas/ReadPartner'
+    WriteAdministrator:
+      required:
+        - id
+        - archived
+        - createdAt
+        - updatedAt
+        - organizationID
+        - role
+        - accountID
+        - provider
+        - receiveNotifications
+        - confirmedAt
+        - description
+        - path
+        - active
+        - serviceRegionID
+        - isWaitingRoom
+        - integrationIDs
+      properties:
+        archived:
+          type: boolean
+          example: false
+        role:
+          type: string
+          example: admin
+        provider:
+          type: boolean
+          example: false
+        receiveNotifications:
+          type: boolean
+          example: true
+        confirmedAt:
+          type: string
+          format: datetime
+          example: '2016-08-29T09:12:33.001Z'
+        description:
+          type: string
+          example: ''
+        active:
+          type: boolean
+          example: false
+        serviceRegionID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        isWaitingRoom:
+          type: boolean
+          example: false
+        account:
+          $ref: '#/components/schemas/WritePartner'
+      type: object  
+
+    ReadAccount:
+      type: object
+      required:
+        - id
+        - archived
+        - createdAt
+        - updatedAt
+        - title
+        - lastName
+        - middleInitial
+        - firstName
+        - birthday
+        - unit
+        - zip
+        - address
+        - city
+        - county
+        - state
+        - country
+        - image
+        - path
+        - mobilePhone
+        - homePhone
+        - workePhone
+        - email
+        - isSuperAccount
+        - creatorType
+        - updatedByID
+        - primaryOrganizationID
+        - failedAuthenticationAttempts
+        - lockedAt
+        - partnerID
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        archived:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        title:
+          type: string
+          example: Mr.
+        firstName:
+          type: string
+          example: John
+        middleInitial:
+          type: string
+          example: L
+        lastName:
+          type: string
+          example: Doe
+        birthday:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        unit:
+          type: string
+          example: Apt 11 
+        zip:
+          type: string
+          example: 24912
+        address:
+          type: string
+          example: 208 Frankford Rd.
+        city:
+          type: string
+          example: Jerico
+        county:
+          type: string
+          example: Almeda
+        state:
+          type: string
+          example: New Hampshire
+        country:
+          type: string
+          example: United States
+        image:
+          type: string
+          example: http://yourimage.com
+        path:
+          type: string
+          example: d290f1ee_6c54_4b01_90e6_d701748f0851
+        mobilePhone:
+          type: string
+          example: 555-555-5555
+        homePhone:
+          type: string
+          example: 555-555-5555
+        workPhone:
+          type: string
+          example: 555-555-5555
+        email:
+          type: string
+          example: johndoe@example.com
+        isSuperAccount:
+          type: boolean
+          example: false
+        creatorType:
+          type: string
+          example: system
+        updatedByID:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        primaryOrganizationID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        failedAuthenticationAttempts:
+          type: string
+          example: 0
+        lockedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        integrationIDs:
+          type: object
+          example: {"covetrus": {"3e14e128-28c8-4af9-bf6b-188c27a72e1f": "13591"}} 
+        partnerID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    WriteAccount:
+      type: object
+      required:
+        - archived
+        - title
+        - lastName
+        - middleInitial
+        - firstName
+        - birthday
+        - unit
+        - zip
+        - address
+        - city
+        - county
+        - state
+        - country
+        - image
+        - mobilePhone
+        - homePhone
+        - workePhone
+        - email
+      properties:
+        password:
+          type: string
+          example: Ab^12hellothere
+        archived:
+          type: boolean
+          example: false
+        title:
+          type: string
+          example: Mr.
+        firstName:
+          type: string
+          example: John
+        middleInitial:
+          type: string
+          example: L
+        lastName:
+          type: string
+          example: Doe
+        birthday:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        unit:
+          type: string
+          example: Apt 11 
+        zip:
+          type: string
+          example: 24912
+        address:
+          type: string
+          example: 208 Frankford Rd.
+        city:
+          type: string
+          example: Jerico
+        county:
+          type: string
+          example: Almeda
+        state:
+          type: string
+          example: New Hampshire
+        country:
+          type: string
+          example: United States
+        image:
+          type: string
+          example: http://yourimage.com
+        
+        mobilePhone:
+          type: string
+          example: 555-555-5555
+        homePhone:
+          type: string
+          example: 555-555-5555
+        workPhone:
+          type: string
+          example: 555-555-5555
+        email:
+          type: string
+          example: johndoe@example.com
