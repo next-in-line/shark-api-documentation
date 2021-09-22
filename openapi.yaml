@@ -1,19 +1,15 @@
 openapi: 3.0.0
 servers:
-  # Added by API Auto Mocking Plugin
   - description: Production Api Standard Users (admins, clients/patients)
     url: https://shark.nextinline.io
   - description: Production Api for partners
     url: https://shark.nextinline.io/partners
 info:
   description: This is a simple API
-  version: "1.0.0"
+  version: 1.0.0
   title: Shark
   contact:
     email: cwright@nextinline.io
-  # license:
-  #   name: Apache 2.0
-  #   url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
   - name: admins
     description: Secured Admin/client calls
@@ -41,7 +37,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
                 $ref: '#/components/schemas/ReadPartner'
         '400':
           description: bad input parameter
@@ -67,7 +62,7 @@ paths:
         '200':
           description: Partner created
         '400':
-          description: 'invalid input, object invalid'
+          description: invalid input, object invalid
         '404':
           description: Partner does not exist
   /partners/{partnerID}/organizations:
@@ -78,6 +73,13 @@ paths:
       operationId: organizationCreate
       description: |
         By passing in the appropriate options, you can create an organization
+      parameters:
+        - in: path
+          name: partnerID
+          schema:
+            type: string
+            format: uuid
+          required: true
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -91,7 +93,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
                 $ref: '#/components/schemas/ReadPartner'
         '400':
           description: bad input parameter
@@ -102,6 +103,12 @@ paths:
       operationId: authenticatePartner
       description: Gets a your partner info from the system
       parameters:
+        - in: path
+          name: partnerID
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: header
           name: x-partner-id
           schema:
@@ -117,7 +124,7 @@ paths:
         '200':
           description: Partner created
         '400':
-          description: 'invalid input, object invalid'
+          description: invalid input, object invalid
         '404':
           description: Partner does not exist
   /partners/{partnerID}/organizations/{organizationID}/administrators:
@@ -129,6 +136,18 @@ paths:
       description: |
         By passing in the appropriate options, you can create an administrator token
       parameters:
+        - in: path
+          name: partnerID
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: organizationID
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: header
           name: x-partner-id
           schema:
@@ -153,7 +172,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
                 $ref: '#/components/schemas/ReadAdministratorAccount'
         '400':
           description: bad input parameter
@@ -165,6 +183,25 @@ paths:
       operationId: administratorUpdate
       description: |
         By passing in the appropriate options, you can update an administrator
+      parameters:
+        - in: path
+          name: partnerID
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: organizationID
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: administratorID
+          schema:
+            type: string
+            format: uuid
+          required: true
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -178,7 +215,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
                 $ref: '#/components/schemas/ReadAdministratorAccount'
         '400':
           description: bad input parameter
@@ -191,6 +227,24 @@ paths:
       description: |
         By passing in the appropriate options, you can get an administrator token
       parameters:
+        - in: path
+          name: partnerID
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: organizationID
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: administratorID
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: header
           name: x-partner-id
           schema:
@@ -208,13 +262,9 @@ paths:
           content:
             application/json:
               schema:
-                type: array
                 $ref: '#/components/schemas/ReadAdministratorAccount'
         '400':
           description: bad input parameter
-  
-
-
 components:
   schemas:
     ReadAdministratorAccount:
@@ -229,7 +279,6 @@ components:
           $ref: '#/components/schemas/WriteAccount'
         administrator:
           $ref: '#/components/schemas/WriteAdministrator'
-    
     ReadPartner:
       type: object
       required:
@@ -265,7 +314,6 @@ components:
           type: string
           example: ACME Corporation
       type: object
-   
     ReadOrganization:
       type: object
       required:
@@ -450,7 +498,9 @@ components:
           example: d290f1ee-6c54-4b01-90e6-d701748f0851
         integrationIDs:
           type: object
-          example: {"covetrus": {"3e14e128-28c8-4af9-bf6b-188c27a72e1f": "13591"}} 
+          example:
+            covetrus:
+              3e14e128-28c8-4af9-bf6b-188c27a72e1f: '13591'
     WriteOrganization:
       required:
         - name
@@ -611,7 +661,6 @@ components:
           format: uuid
           example: d290f1ee-6c54-4b01-90e6-d701748f0851
       type: object
-    
     ReadAdministrator:
       type: object
       required:
@@ -639,7 +688,6 @@ components:
         archived:
           type: boolean
           example: false
-
         createdAt:
           type: string
           format: datetime
@@ -687,7 +735,9 @@ components:
           example: false
         integrationIDs:
           type: object
-          example: {"covetrus": {"3e14e128-28c8-4af9-bf6b-188c27a72e1f": "13591"}} 
+          example:
+            covetrus:
+              3e14e128-28c8-4af9-bf6b-188c27a72e1f: '13591'
         account:
           $ref: '#/components/schemas/ReadPartner'
     WriteAdministrator:
@@ -740,8 +790,7 @@ components:
           example: false
         account:
           $ref: '#/components/schemas/WritePartner'
-      type: object  
-
+      type: object
     ReadAccount:
       type: object
       required:
@@ -808,7 +857,7 @@ components:
           example: '2016-08-29T09:12:33.001Z'
         unit:
           type: string
-          example: Apt 11 
+          example: Apt 11
         zip:
           type: string
           example: 24912
@@ -868,7 +917,9 @@ components:
           example: '2016-08-29T09:12:33.001Z'
         integrationIDs:
           type: object
-          example: {"covetrus": {"3e14e128-28c8-4af9-bf6b-188c27a72e1f": "13591"}} 
+          example:
+            covetrus:
+              3e14e128-28c8-4af9-bf6b-188c27a72e1f: '13591'
         partnerID:
           type: string
           format: uuid
@@ -919,7 +970,7 @@ components:
           example: '2016-08-29T09:12:33.001Z'
         unit:
           type: string
-          example: Apt 11 
+          example: Apt 11
         zip:
           type: string
           example: 24912
@@ -941,7 +992,6 @@ components:
         image:
           type: string
           example: http://yourimage.com
-        
         mobilePhone:
           type: string
           example: 555-555-5555
