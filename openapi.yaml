@@ -16,30 +16,6 @@ tags:
   - name: partners
     description: Operations available to regular developers
 paths:
-  /partners:
-    post:
-      tags:
-        - partners
-      summary: Creates a partner
-      operationId: partnerCreate
-      description: |
-        By passing in the appropriate options, you can create a partner account
-      requestBody:
-        description: Optional description in *Markdown*
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WritePartner'
-      responses:
-        '201':
-          description: Partner Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReadPartner'
-        '400':
-          description: bad input parameter
     get:
       tags:
         - partners
@@ -86,22 +62,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WritePartner'
+              $ref: '#/components/schemas/WriteOrganization'
       responses:
         '201':
-          description: Partner Created
+          description: Organization Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReadPartner'
+                $ref: '#/components/schemas/ReadOrganization'
         '400':
           description: bad input parameter
     get:
       tags:
         - partners
-      summary: gets partner information
-      operationId: authenticatePartner
-      description: Gets a your partner info from the system
+      summary: gets organization information
+      operationId: getOrganizations
+      description: Gets your organizations from the system
       parameters:
         - in: path
           name: partnerID
@@ -123,10 +99,58 @@ paths:
       responses:
         '200':
           description: Partner created
+          content:
+            application/json:
+              schema:
+                type: array
+                $items:
+                  $ref: '#/components/schemas/ReadOrganization'
         '400':
           description: invalid input, object invalid
         '404':
-          description: Partner does not exist
+          description: Organization does not exist
+  /partners/{partnerID}/organizations/${organizationID}:
+    get:
+      tags:
+        - partners
+      summary: "gets an organization's information"
+      operationId: getOrganization
+      description: Gets your organizations from the system
+      parameters:
+        - in: path
+          name: partnerID
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: organizationID
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: x-partner-id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: header
+          name: x-partner-private-key
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Partner created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOrganization'
+        '400':
+          description: invalid input, object invalid
+        '404':
+          description: Organization does not exist
   /partners/{partnerID}/organizations/{organizationID}/administrators:
     post:
       tags:
@@ -134,7 +158,7 @@ paths:
       summary: Creates administrator on organization
       operationId: administratorCreate
       description: |
-        By passing in the appropriate options, you can create an administrator token
+        By passing in the appropriate options, you can create an administrator
       parameters:
         - in: path
           name: partnerID
@@ -262,7 +286,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReadAdministratorAccount'
+                $ref: '#/components/schemas/AuthenticateAdministratorAccount'
         '400':
           description: bad input parameter
 components:
@@ -1004,3 +1028,136 @@ components:
         email:
           type: string
           example: johndoe@example.com
+    ReadAdministratorAuthenticate:
+      type: object
+      required:
+        - id
+        - archived
+        - createdAt
+        - updatedAt
+        - title
+        - lastName
+        - middleInitial
+        - firstName
+        - birthday
+        - unit
+        - zip
+        - address
+        - city
+        - county
+        - state
+        - country
+        - image
+        - path
+        - mobilePhone
+        - homePhone
+        - workePhone
+        - email
+        - isSuperAccount
+        - creatorType
+        - updatedByID
+        - primaryOrganizationID
+        - failedAuthenticationAttempts
+        - lockedAt
+        - partnerID
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        archived:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        title:
+          type: string
+          example: Mr.
+        firstName:
+          type: string
+          example: John
+        middleInitial:
+          type: string
+          example: L
+        lastName:
+          type: string
+          example: Doe
+        birthday:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        unit:
+          type: string
+          example: Apt 11
+        zip:
+          type: string
+          example: 24912
+        address:
+          type: string
+          example: 208 Frankford Rd.
+        city:
+          type: string
+          example: Jerico
+        county:
+          type: string
+          example: Almeda
+        state:
+          type: string
+          example: New Hampshire
+        country:
+          type: string
+          example: United States
+        image:
+          type: string
+          example: http://yourimage.com
+        path:
+          type: string
+          example: d290f1ee_6c54_4b01_90e6_d701748f0851
+        mobilePhone:
+          type: string
+          example: 555-555-5555
+        homePhone:
+          type: string
+          example: 555-555-5555
+        workPhone:
+          type: string
+          example: 555-555-5555
+        email:
+          type: string
+          example: johndoe@example.com
+        isSuperAccount:
+          type: boolean
+          example: false
+        creatorType:
+          type: string
+          example: system
+        updatedByID:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        primaryOrganizationID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        failedAuthenticationAttempts:
+          type: string
+          example: 0
+        lockedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        integrationIDs:
+          type: object
+          example:
+            covetrus:
+              3e14e128-28c8-4af9-bf6b-188c27a72e1f: '13591'
+        partnerID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
